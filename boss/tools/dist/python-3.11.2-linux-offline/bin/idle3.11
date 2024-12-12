@@ -1,0 +1,5 @@
+#!/home/liangliang/wk/boss/nuttx/vendor/boss/tools/scripts/cccc/Python-3.11.2/python-3.11.2-offline/bin/python3.11
+
+from idlelib.pyshell import main
+if __name__ == '__main__':
+    main()
