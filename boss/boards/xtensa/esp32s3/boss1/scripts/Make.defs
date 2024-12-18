@@ -21,6 +21,7 @@
 include $(TOPDIR)/.config
 include $(TOPDIR)/tools/Config.mk
 include $(TOPDIR)/tools/esp32s3/Config.mk
+include $(TOPDIR)/vendor/boss/boards/xtensa/esp32s3/tools/Config.mk
 include $(TOPDIR)/arch/xtensa/src/lx7/Toolchain.defs
 
 ARCHSCRIPT += $(BOARD_COMMON_DIR)$(DELIM)scripts$(DELIM)esp32s3_peripherals.ld
