@@ -1,5 +1,7 @@
+import codecs
 from collections import _OrderedDictKeysView
 from importlib import import_module
+import locale
 import os
 from pkgutil import iter_modules
 import subprocess
@@ -50,7 +52,7 @@ def _check_environment() -> List:
         set_idf_path = os.path.realpath(os.environ['IDF_PATH'])
         if set_idf_path != detected_idf_path:
             warn(
-                'WARNING: IDF_PATH environment variable is set to %s but %s path indicates IDF directory %s. '
+                'IDF_PATH environment variable is set to %s but %s path indicates IDF directory %s. '
                 'Using the environment variable directory, but results may be unexpected...' %
                 (set_idf_path, PROG, detected_idf_path))
     else:
@@ -62,9 +64,9 @@ def _check_environment() -> List:
     try:
         python_venv_path = os.environ['IDF_PYTHON_ENV_PATH']
         if python_venv_path and not sys.executable.startswith(python_venv_path):
-            warn(f'WARNING: Python interpreter "{sys.executable}" used to start idf.py is not from installed venv "{python_venv_path}"')
+            warn(f'Python interpreter "{sys.executable}" used to start idf.py is not from installed venv "{python_venv_path}"')
     except KeyError:
-        warn('WARNING: The IDF_PYTHON_ENV_PATH is missing in environmental variables!')
+        warn('The IDF_PYTHON_ENV_PATH is missing in environmental variables!')
 
     return checks_output
 
@@ -392,7 +394,7 @@ def init_cli(verbose_output: List=None) -> Any:
                 dupes = ', '.join('"%s"' % t for t in dupplicated_tasks)
 
                 warn(
-                    'WARNING: Command%s found in the list of commands more than once. ' %
+                    'Command%s found in the list of commands more than once. ' %
                     ('s %s are' % dupes if len(dupplicated_tasks) > 1 else ' %s is' % dupes) +
                     'Only first occurrence will be executed.')
 
@@ -523,7 +525,7 @@ def init_cli(verbose_output: List=None) -> Any:
     extensions = []
     for directory in extension_dirs:
         if directory and not os.path.exists(directory):
-            warn('WARNING: Directory with idf.py extensions doesn\'t exist:\n    %s' % directory)
+            warn('Directory with idf.py extensions doesn\'t exist:\n    %s' % directory)
             continue
 
         sys.path.append(directory)
@@ -543,7 +545,7 @@ def init_cli(verbose_output: List=None) -> Any:
         try:
             all_actions = merge_action_lists(all_actions, extension.action_extensions(all_actions, project_dir))
         except AttributeError:
-            warn('WARNING: Cannot load idf.py extension "%s"' % name)
+            warn('Cannot load idf.py extension "%s"' % name)
 
     # Load extensions from project dir
     if os.path.exists(os.path.join(project_dir, 'idf_ext.py')):
@@ -589,6 +591,48 @@ def main(argv: List[Any] = None) -> None:
     pass
 
 
+def _valid_unicode_config() -> Union[codecs.CodecInfo, bool]:
+    # Python 2 is always good
+    if sys.version_info[0] == 2:
+        return True
+
+    # With python 3 unicode environment is required
+    try:
+        return codecs.lookup(locale.getpreferredencoding()).name != 'ascii'
+    except Exception:
+        return False
+
+
+def _find_usable_locale() -> str:
+    try:
+        locales = subprocess.Popen(['locale', '-a'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0].decode('ascii', 'replace')
+    except OSError:
+        locales = ''
+
+    usable_locales: List[str] = []
+    for line in locales.splitlines():
+        locale = line.strip()
+        locale_name = locale.lower().replace('-', '')
+
+        # C.UTF-8 is the best option, if supported
+        if locale_name == 'c.utf8':
+            return locale
+
+        if locale_name.endswith('.utf8'):
+            # Make a preference of english locales
+            if locale.startswith('en_'):
+                usable_locales.insert(0, locale)
+            else:
+                usable_locales.append(locale)
+
+    if not usable_locales:
+        raise FatalError(
+            'Support for Unicode filenames is required, but no suitable UTF-8 locale was found on your system.'
+            ' Please refer to the manual for your operating system for details on locale reconfiguration.')
+
+    return usable_locales[0]
+
+
 if __name__ == '__main__':
     try:
         if 'MSYSTEM' in os.environ:
@@ -599,7 +643,7 @@ if __name__ == '__main__':
             # Trying to find best utf-8 locale available on the system and restart python with it
             best_locale = _find_usable_locale()
 
-            print_warning(
+            warn(
                 'Your environment is not configured to handle unicode filenames outside of ASCII range.'
                 ' Environment variable LC_ALL is temporary set to %s for unicode support.' % best_locale)
 
