@@ -3,3 +3,4 @@
 setuptools
 click
 pyparsing
+esptool
