@@ -26,7 +26,7 @@ def unpack_gz(filename: str, destination: str) -> None:
 
 
 def unpack_xz(filename: str, destination: str) -> None:
-    raise ValueError('无精力测试')
+    # raise ValueError('无精力测试')
     try:
         archive_obj = tarfile.open(filename, 'r:xz')
         if sys.version_info.major == 2:
@@ -92,15 +92,6 @@ def unpack(filename: str, destination: str) -> None:
         unpack_zip(filename, destination)
     else:
         raise NotImplementedError('Unsupported archive type')
-
-    # ZipFile on Unix systems does not preserve file permissions while extracting it
-    # We need to reset the permissions afterward
-    if sys.platform != 'win32' and filename.endswith('zip') and isinstance(archive_obj, ZipFile):
-        for file_info in archive_obj.infolist():
-            extracted_file = os.path.join(destination, file_info.filename)
-            extracted_permissions = file_info.external_attr >> 16 & 0o777  # Extract Unix permissions
-            if os.path.exists(extracted_file):
-                os.chmod(extracted_file, extracted_permissions)
 
 def do_strip_container_dirs(path: str, levels: int) -> None:
     """
