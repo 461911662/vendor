@@ -70,8 +70,10 @@ context::
 clean::
 	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)flash_args)
 	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)nuttx.merged.bin)
+	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)qemu_efuse.bin)
 
 distclean::
 	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)flash_args)
 	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)nuttx.merged.bin)
+	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)qemu_efuse.bin)
 
