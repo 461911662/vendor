@@ -11,6 +11,7 @@ import click
 from pycmd.errors import FatalError
 from pycmd.idf_py_actions.global_options import global_options
 from pycmd.idf_py_actions.tools import PropertyDict, ensure_build_directory, merge_action_lists
+from pycmd.utils import warn, info
 
 
 def action_extensions(base_actions: Dict, project_path: str) -> Any:
@@ -27,9 +28,9 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
                 if add_options:
                     action_info['options'] = actions[a].get('params')
                 output_dict['actions'].append(action_info)
-            print(json.dumps(output_dict, sort_keys=True, indent=4))
+            info(json.dumps(output_dict, sort_keys=True, indent=4))
         else:
-            print(ctx.get_help())
+            info(ctx.get_help())
         ctx.exit()
 
 
@@ -39,12 +40,12 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
                 if d == '__pycache__':
                     dir_to_delete = os.path.join(root, d)
                     if args.verbose:
-                        print('Removing: %s' % dir_to_delete)
+                        info('Removing: %s' % dir_to_delete)
                     shutil.rmtree(dir_to_delete)
             for filename in fnmatch.filter(filenames, '*.py[co]'):
                 file_to_delete = os.path.join(root, filename)
                 if args.verbose:
-                    print('Removing: %s' % file_to_delete)
+                    info('Removing: %s' % file_to_delete)
                 os.remove(file_to_delete)
 
 
@@ -53,7 +54,7 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
             return None
 
         for line in ctx.command.verbose_output:
-            print(line)
+            info(line)
 
         return value
 
@@ -65,8 +66,10 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
                 'Setting the build directory to the project directory is not supported. Suggest dropping '
                 "--build-dir option, the default is a 'build' subdirectory inside the project directory.")
         if args.build_dir is None:
-            args.build_dir = os.path.join(args.project_dir, 'build')
+            args.build_dir = os.path.join(args.project_dir)
         args.build_dir = os.path.realpath(args.build_dir)
+        warn(f"Current Project Path: {args.project_dir}")
+        warn(f"Current Project Build Path: {args.build_dir}")
 
 
     def build_target(target_name: str, ctx: Context, args: PropertyDict) -> None:
