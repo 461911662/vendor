@@ -15,4 +15,7 @@ endif
 # POSTBUILD -- Perform post build operations
 define POSTBUILD
 	$(Q) echo "POSTBUILD"
+	$(call MKIMAGE)
+	$(if $(CONFIG_ESP32S3_MERGE_BINS),$(call MERGEBIN))
 endef
+

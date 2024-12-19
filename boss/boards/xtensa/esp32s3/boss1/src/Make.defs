@@ -61,3 +61,15 @@ DEPPATH += --dep-path board
 VPATH += :board
 CFLAGS += ${INCDIR_PREFIX}$(TOPDIR)$(DELIM)arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src$(DELIM)board$(DELIM)board
 
+context::
+	$(Q) echo "GEN flash_args"
+	$(Q) echo $(ESPTOOL_FLASH_OPTS) > $(TOPDIR)$(DELIM)flash_args
+	$(Q) echo $(FLASH_BL) >> $(TOPDIR)$(DELIM)flash_args
+	$(Q) echo $(FLASH_APP) >> $(TOPDIR)$(DELIM)flash_args
+
+clean::
+	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)flash_args)
+
+distclean::
+	$(Q) $(call DELFILE,$(TOPDIR)$(DELIM)flash_args)
+

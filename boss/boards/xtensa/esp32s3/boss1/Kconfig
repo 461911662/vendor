@@ -3,18 +3,31 @@
 # see the file kconfig-language.txt in the NuttX tools repository.
 #
 
-if ARCH_BOARD_ESP32S3_DEVKIT
+if ARCH_BOARD_CUSTOM
 
 choice
-	prompt "ESP32-S3-DevKitC-1 version"
-	default ESP32S3_DEVKITC_1_V10
+	prompt "ESP32-S3-Boss1 v1.0 version"
+	default ESP32S3_BOSS1_V1_0
 
-config ESP32S3_DEVKITC_1_V10
-	bool "ESP32-S3-DevKitC-1 v1.0"
+config ESP32S3_BOSS1_V1_0
+	bool "ESP32-S3-Boss1 v1.0"
+	depends on ARCH_CHIP_ESP32S3WROOM1N4 || ARCH_CHIP_ESP32S3MINI1N8 || ARCH_CHIP_ESP32S3WROOM2N16R8V || ARCH_CHIP_ESP32S3WROOM2N32R8V || ARCH_CHIP_ESP32S3CUSTOM
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS if ESP32S3_GPIO_IRQ
+	---help---
+                The ESP32-S3 DevKit features the ESP32-S3 CPU with dual Xtensa LX7 cores.
+                It comes in two flavors, the ESP32-S3-DevKitM-1 and the ESP32-S3-DevKitC-1.
+                The ESP32-S3-DevKitM-1 version contains the ESP32-S3-MINI-1/1U module and the
+                ESP32-S3-DevKitC-1 version may be based either on ESP32-S3-WROOM-1/1U or
+                ESP32-S3-WROOM-2/2U.
 
-config ESP32S3_DEVKITC_1_V11
-	bool "ESP32-S3-DevKitC-1 v1.1"
 endchoice
+
+endif #ARCH_BOARD_CUSTOM
+
+
+if ESP32S3_BOSS1_V1_0
 
 config ESP32S3_STORAGE_MTD_OFFSET
 	hex "Storage MTD base address in SPI Flash"
@@ -92,4 +105,4 @@ config PM_SLEEP_WAKEUP_NSEC
 
 endif # PM
 
-endif # ARCH_BOARD_ESP32S3_DEVKIT
+endif # ESP32S3_BOSS1_V1_0
