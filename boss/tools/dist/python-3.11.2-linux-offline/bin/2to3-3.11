@@ -1,0 +1,5 @@
+#!/home/liangliang/wk/boss/nuttx/vendor/boss/tools/dist/python-3.11.2-linux-offline/bin/python3.11
+import sys
+from lib2to3.main import main
+
+sys.exit(main("lib2to3.fixes"))
