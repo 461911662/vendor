@@ -4,3 +4,4 @@ setuptools
 click
 pyparsing
 esptool
+imgtool

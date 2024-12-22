@@ -15,6 +15,9 @@ pyparsing>=3.1.0,<4
 # esptool: for espressif chip tools
 esptool~=4.8
 
+# imgtool: for bootloader sign
+imgtool~=2.1.0
+
 # --------- CORE ends ----------
 
 # --------- GDBGUI -------------
