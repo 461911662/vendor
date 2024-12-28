@@ -58,13 +58,14 @@ if (NOT DEFINED ESP_HAL_PATH)
     endif()
 endif()
 
-execute_process(
-    COMMAND git describe --tags
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    OUTPUT_VARIABLE MCUBOOT_VER
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-add_definitions(-DMCUBOOT_VER=\"${MCUBOOT_VER}\")
+#execute_process(
+#    COMMAND git describe --tags
+#    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#    OUTPUT_VARIABLE MCUBOOT_VER
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#    )
+#add_definitions(-DMCUBOOT_VER=\"${MCUBOOT_VER}\")
+add_definitions(-DMCUBOOT_VER="v0.0.0")
 
 if (NOT DEFINED MCUBOOT_CONFIG_FILE)
     set(MCUBOOT_CONFIG_FILE "${CMAKE_CURRENT_LIST_DIR}/port/${MCUBOOT_TARGET}/bootloader.conf")

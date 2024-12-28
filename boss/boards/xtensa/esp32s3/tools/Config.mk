@@ -4,7 +4,7 @@ ifeq ($(CONFIG_ESP32S3_APP_FORMAT_MCUBOOT),y)
 # bootloader cfg
 	BL_OFFSET       := 0x0000
 	ifeq ($(CONFIG_ESP32S3_SECURE_BOOT),y)
-		BOOTLOADER 	:= mcuboot-esp32s2.signed.bin
+		BOOTLOADER 	:= mcuboot-esp32s3.signed.bin
 	else
 		BOOTLOADER  := mcuboot-esp32s3.bin
 	endif

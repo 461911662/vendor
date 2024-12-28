@@ -174,7 +174,11 @@ esp_err_t check_and_generate_secure_boot_keys(void)
 
     if (!has_secure_boot_digest) {
         /* Generate the bootloader public key digests */
+#if 0
         ret = s_calculate_image_public_key_digests(bootloader_data.start_addr, bootloader_data.image_len - SIG_BLOCK_PADDING, &boot_key_digests);
+#else
+        ret = s_calculate_image_public_key_digests(bootloader_data.start_addr, bootloader_data.image_len, &boot_key_digests);
+#endif
         if (ret != ESP_OK) {
             ESP_LOGE(TAG, "Bootloader signature block is invalid");
             return ret;
