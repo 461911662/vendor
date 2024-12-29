@@ -34,6 +34,10 @@ endif
 
 ESPTOOL_BINS += $(FLASH_APP)
 
+ifeq ($(CONFIG_ESP32S3_SECURE_BOOT),y)
+ESPTOOL_FLASH_OPTS := -fs keep -fm keep -ff keep
+endif
+
 # PREBUILD -- Perform pre build operations
 ifeq ($(CONFIG_BUILD_PROTECTED),y)
 define PREBUILD
