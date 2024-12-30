@@ -179,6 +179,21 @@ void esp_efuse_utility_debug_dump_pending(void)
 esp_err_t esp_efuse_utility_burn_efuses(void)
 {
     ++s_burn_counter;
+#ifdef CONFIG_ESP32S3_EFUSE_WRRD_CLOSE
+    uint32_t value = 0x0;
+    // EFUSE dis WR
+    uint32_t addr_wr_block = range_write_addr_blocks[EFUSE_BLK0].start;
+    value = REG_READ(addr_wr_block);
+    REG_WRITE(addr_wr_block, 0);
+    ESP_EARLY_LOGW(TAG, "Block0 reg0 value(0x%08x) update(0x%08x)", value, 0);
+
+    // EFUSE dis RD
+    value = 0x0;
+    addr_wr_block = range_write_addr_blocks[EFUSE_BLK0].start + 4;
+    value = REG_READ(addr_wr_block);
+    REG_WRITE(addr_wr_block, value & 0xFFFFFF80);
+    ESP_EARLY_LOGW(TAG, "Block0 reg1 value(0x%08x) update(0x%08x)", value, value & 0xFFFFFF80);
+#endif
 #ifdef CONFIG_EFUSE_VIRTUAL_LOG_ALL_WRITES
     ESP_EARLY_LOGW(TAG, "Burn:");
     esp_efuse_utility_debug_dump_pending();
