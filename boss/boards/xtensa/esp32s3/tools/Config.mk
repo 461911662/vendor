@@ -35,8 +35,11 @@ endif
 ESPTOOL_BINS += $(FLASH_APP)
 
 ifeq ($(CONFIG_ESP32S3_SECURE_BOOT),y)
-ESPTOOL_FLASH_OPTS := -fs keep -fm keep -ff keep
+	DEBUG_FLASH_EFUSE_BIN := vendor$(DELIM)boss$(DELIM)boards$(DELIM)xtensa$(DELIM)esp32s3$(DELIM)tools$(DELIM)debug-flash-efuse.bin
+	ESP32S3_PARTITION_OFFSET := 0x250000
+	ESPTOOL_WRITEFLASH_OPTS := -fs keep -fm keep -ff keep
 endif
+DEBUG_FLASH_BIN := $(ESP32S3_PARTITION_OFFSET) $(DEBUG_FLASH_EFUSE_BIN)
 
 # PREBUILD -- Perform pre build operations
 ifeq ($(CONFIG_BUILD_PROTECTED),y)
@@ -58,3 +61,14 @@ define POSTBUILD
 	$(if $(CONFIG_ESP32S3_MERGE_BINS),$(call MERGEBIN))
 endef
 
+# FLASH -- Download a binary image via esptool.py
+
+define FLASH
+	$(Q) if [ -z $(ESPTOOL_PORT) ]; then \
+		echo "FLASH error: Missing serial port device argument."; \
+		echo "USAGE: make flash ESPTOOL_PORT=<port> [ ESPTOOL_BAUD=<baud> ] [ ESPTOOL_BINDIR=<dir> ]"; \
+		exit 1; \
+	fi
+	$(eval ESPTOOL_OPTS := -c esp32s3 -p $(ESPTOOL_PORT) -b $(ESPTOOL_BAUD) $(if $(CONFIG_ESP32S3_ESPTOOLPY_NO_STUB),--no-stub))
+	esptool.py $(ESPTOOL_OPTS) write_flash $(ESPTOOL_WRITEFLASH_OPTS) $(DEBUG_FLASH_BIN) $(ESPTOOL_BINS)
+endef
