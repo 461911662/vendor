@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/xtensa/esp32s3/esp32s3-devkit/src/esp32s3-devkit.h
+ * boards/xtensa/esp32s3/boss1/src/esp32s3-boss1.h
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -35,10 +35,19 @@
 
 /* ESP32-S3-DEVKIT GPIOs ****************************************************/
 
-/* LCD pins, i.e. used by ST7735 */
+/* LCD pins, i.e. used by ST7789 */
 
-#define GPIO_LCD_DC         14
-#define GPIO_LCD_RST        9
+#define DISPLAY_SPI         2
+
+/* CS:   5
+ * CLK:  7
+ * MOSI: 6
+ * MISO: N/A
+ */
+
+#define GPIO_LCD_DC          4
+#define GPIO_LCD_BCKL        9
+#define GPIO_LCD_RST         8
 
 /* BOOT Button */
 

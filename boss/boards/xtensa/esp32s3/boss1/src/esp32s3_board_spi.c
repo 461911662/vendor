@@ -31,7 +31,7 @@
 #include <nuttx/spi/spi.h>
 
 #include "esp32s3_gpio.h"
-#include "esp32s3-devkit.h"
+#include "esp32s3-boss1.h"
 
 /****************************************************************************
  * Private Functions
@@ -71,6 +71,7 @@ int esp32s3_spi2_cmddata(struct spi_dev_s *dev, uint32_t devid, bool cmd)
        */
 
       esp32s3_gpiowrite(GPIO_LCD_DC, !cmd);
+      spiinfo("GPIO_LCD_DC:%x, val:%x\n", GPIO_LCD_DC, !cmd);
 
       return OK;
     }

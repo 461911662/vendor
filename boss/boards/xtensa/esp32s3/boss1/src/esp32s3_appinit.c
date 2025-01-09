@@ -27,7 +27,7 @@
 #include <sys/types.h>
 #include <nuttx/board.h>
 
-#include "esp32s3-devkit.h"
+#include "esp32s3-boss1.h"
 
 #ifdef CONFIG_BOARDCTL
 

@@ -34,7 +34,7 @@
 
 #include "esp32s3_gpio.h"
 #include "hardware/esp32s3_gpio_sigmap.h"
-#include "esp32s3-devkit.h"
+#include "esp32s3-boss1.h"
 
 #ifdef CONFIG_INPUT_DJOYSTICK
 

@@ -125,7 +125,7 @@
 #  include "espressif/esp_temperature_sensor.h"
 #endif
 
-#include "esp32s3-devkit.h"
+#include "esp32s3-boss1.h"
 
 /****************************************************************************
  * Public Functions

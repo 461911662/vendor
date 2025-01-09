@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/xtensa/esp32s3/esp32s3-devkit/src/esp32s3_st7735.c
+ * boards/xtensa/esp32s3/esp32s3-box/src/esp32s3_board_lcd_st7789.c
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -34,24 +34,26 @@
 #include <nuttx/signal.h>
 #include <nuttx/spi/spi.h>
 #include <nuttx/lcd/lcd.h>
-#include <nuttx/lcd/st7735.h>
+#include <nuttx/lcd/st7789.h>
 
-#include "esp32s3_spi.h"
+#include <arch/board/board.h>
+
 #include "esp32s3_gpio.h"
-#include "esp32s3-devkit.h"
+#include "esp32s3_spi.h"
+#include "hardware/esp32s3_gpio_sigmap.h"
+
+#include "esp32s3-boss1.h"
 
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
-
-#define LCD_SPI_PORTNO     2
 
 /****************************************************************************
  * Private Data
  ****************************************************************************/
 
 static struct spi_dev_s *g_spidev;
-static struct lcd_dev_s *g_lcd = NULL;
+static struct lcd_dev_s *g_lcd;
 
 /****************************************************************************
  * Public Functions
@@ -65,29 +67,43 @@ static struct lcd_dev_s *g_lcd = NULL;
  *   fully initialized, display memory cleared, and the LCD ready to use, but
  *   with the power setting at 0 (full off).
  *
+ * Returned Value:
+ *   Zero (OK) on success; a negated errno value on failure.
+ *
  ****************************************************************************/
 
 int board_lcd_initialize(void)
 {
-  g_spidev = esp32s3_spibus_initialize(LCD_SPI_PORTNO);
+  /* Initialize non-SPI GPIOs */
+
+  esp32s3_configgpio(GPIO_LCD_DC, OUTPUT);
+  esp32s3_configgpio(GPIO_LCD_RST, OUTPUT);
+  esp32s3_configgpio(GPIO_LCD_BCKL, OUTPUT);
+
+  /* Reset LCD */
+
+  esp32s3_gpiowrite(GPIO_LCD_RST, false);
+  nxsig_usleep(10 * 1000);
+  esp32s3_gpiowrite(GPIO_LCD_RST, true);
+  nxsig_usleep(10 * 1000);
+
+  /* Turn on LCD backlight */
+
+  esp32s3_gpiowrite(GPIO_LCD_BCKL, true);
+
+  g_spidev = esp32s3_spibus_initialize(DISPLAY_SPI);
   if (!g_spidev)
     {
-      lcderr("ERROR: Failed to initialize SPI port %d\n", LCD_SPI_PORTNO);
+      lcderr("ERROR: Failed to initialize SPI port %d\n", DISPLAY_SPI);
       return -ENODEV;
     }
 
-  /* Data/Control PIN */
-
-  esp32s3_configgpio(GPIO_LCD_DC, OUTPUT);
-  esp32s3_gpiowrite(GPIO_LCD_DC, true);
-
-  /* Reset device */
-
-  esp32s3_configgpio(GPIO_LCD_RST, OUTPUT);
-  esp32s3_gpiowrite(GPIO_LCD_RST, false);
-  nxsig_usleep(10000);
-  esp32s3_gpiowrite(GPIO_LCD_RST, true);
-  nxsig_usleep(100000);
+  g_lcd = st7789_lcdinitialize(g_spidev);
+  if (!g_lcd)
+    {
+      lcderr("ERROR: st7789_lcdinitialize() failed\n");
+      return -ENODEV;
+    }
 
   return OK;
 }
@@ -99,19 +115,23 @@ int board_lcd_initialize(void)
  *   Return a a reference to the LCD object for the specified LCD.  This
  *   allows support for multiple LCD devices.
  *
+ * Input Parameters:
+ *   devno - LCD device nmber
+ *
+ * Returned Value:
+ *   LCD device pointer if success or NULL if failed.
+ *
  ****************************************************************************/
 
 struct lcd_dev_s *board_lcd_getdev(int devno)
 {
-  g_lcd = st7735_lcdinitialize(g_spidev);
   if (!g_lcd)
     {
-      lcderr("ERROR: Failed to bind SPI port %d to LCD %d\n", LCD_SPI_PORTNO,
-      devno);
+      lcderr("ERROR: Failed to bind SPI port 4 to LCD %d\n", devno);
     }
   else
     {
-      lcdinfo("SPI port %d bound to LCD %d\n", LCD_SPI_PORTNO, devno);
+      lcdinfo("SPI port %d bound to LCD %d\n", DISPLAY_SPI, devno);
       return g_lcd;
     }
 
@@ -123,6 +143,9 @@ struct lcd_dev_s *board_lcd_getdev(int devno)
  *
  * Description:
  *   Uninitialize the LCD support
+ *
+ * Returned Value:
+ *   None
  *
  ****************************************************************************/
 
