@@ -77,6 +77,11 @@ config ESP32S3_SPIFLASH_LITTLEFS
 
 endchoice # ESP32S3_SPIFLASH_FS
 
+config ESP32S3_SPI2_3WIRE_HALF
+	bool "ENABLE CS SCLK MOSI pin for SPI2 transport."
+	depends on ESP32S3_SPI2
+	default false
+
 if PM
 
 config PM_ALARM_SEC
