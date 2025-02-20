@@ -128,6 +128,13 @@
 #include "esp32s3-boss1.h"
 
 /****************************************************************************
+ *      DEFINES
+ ****************************************************************************/
+#ifdef CONFIG_START_APP_BY_CPU
+extern int start_app_by_cpu(uint8_t pid); // from esp32s3_start_app.c file.
+#endif
+
+/****************************************************************************
  * Public Functions
  ****************************************************************************/
 
@@ -458,6 +465,13 @@ int esp32s3_bringup(void)
     {
       syslog(LOG_ERR, "ERROR: Failed to initialize LCD.\n");
     }
+#ifdef CONFIG_LCD_DEV
+  ret = lcddev_register(0);
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: lcddev_register() failed: %d\n", ret);
+    }
+#endif
 #endif
 
 #ifdef CONFIG_NET_LAN9250
@@ -521,6 +535,12 @@ int esp32s3_bringup(void)
    * capabilities.
    */
 
+#ifdef CONFIG_START_APP_BY_CPU
+  ret = start_app_by_cpu(1);
+  if (ret < 0) {
+    syslog(LOG_ERR, "ERROR: start app from special cpu failed: %d\n", ret);
+  }
+#endif
   UNUSED(ret);
   return OK;
 }

@@ -278,5 +278,25 @@ int esp32s3_lan9250_initialize(int port);
 int esp32s3_lan9250_uninitialize(int port);
 #endif
 
+#ifdef CONFIG_START_APP_BY_CPU
+/****************************************************************************
+ * Name: start_app_by_cpu
+ *
+ * Description:
+ *   This function is called by platform-specific bringup logic to startup app
+ *   from special cpu.
+ *
+ * Input Parameters:
+ *   cpu - The special process id
+ *
+ * Returned Value:
+ *   Pid is returned on success. Otherwise, a negated errno value is
+ *   returned to indicate the nature of the failure.
+ *
+ ****************************************************************************/
+
+int start_app_by_cpu(uint8_t cpu);
+#endif
+
 #endif /* __ASSEMBLY__ */
 #endif /* __BOARDS_XTENSA_ESP32S3_ESP32S3_DEVKIT_SRC_ESP32S3_DEVKIT_H */

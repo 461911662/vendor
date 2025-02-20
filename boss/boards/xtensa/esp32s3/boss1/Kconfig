@@ -170,4 +170,10 @@ config ESP32S3_EFUSE_VIRTUAL_LOG_ALL_WRITES
 	help
 		If enabled, log efuse burns. This shows changes that would be made.
 
+config START_APP_BY_CPU
+	bool "startup application by special process"
+	default n
+	help
+		If enable, application will startup from special process.
+
 endif # ESP32S3_BOSS1_V1_0
