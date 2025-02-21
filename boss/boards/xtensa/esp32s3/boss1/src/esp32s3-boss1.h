@@ -40,8 +40,8 @@
 #define DISPLAY_SPI         2
 
 /* CS:   5
- * CLK:  7
- * MOSI: 6
+ * CLK:  6
+ * MOSI: 7
  * MISO: N/A
  */
 
