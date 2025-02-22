@@ -1,4 +1,5 @@
-SECURE_BOOT_KEY_DEF_PATH := $(TOPDIR)$(DELIM)vendor$(DELIM)boss$(DELIM)boards$(DELIM)xtensa$(DELIM)esp32s3$(DELIM)tools$(DELIM)secure_boot_sign_key
+ARCH_BOARD_CUSTOM_DIR := $(patsubst "%",%,$(CONFIG_ARCH_BOARD_CUSTOM_DIR))
+SECURE_BOOT_KEY_DEF_PATH := $(TOPDIR)$(DELIM)$(ARCH_BOARD_CUSTOM_DIR)$(DELIM)..$(DELIM)tools$(DELIM)secure_boot_sign_key
 
 ifeq ($(CONFIG_ESP32S3_APP_FORMAT_MCUBOOT),y)
 # bootloader cfg
@@ -35,7 +36,7 @@ endif
 ESPTOOL_BINS += $(FLASH_APP)
 
 ifeq ($(CONFIG_ESP32S3_SECURE_BOOT),y)
-	DEBUG_FLASH_EFUSE_BIN := vendor$(DELIM)boss$(DELIM)boards$(DELIM)xtensa$(DELIM)esp32s3$(DELIM)tools$(DELIM)debug-flash-efuse.bin
+	DEBUG_FLASH_EFUSE_BIN := $(TOPDIR)$(DELIM)$(ARCH_BOARD_CUSTOM_DIR)$(DELIM)..$(DELIM)tools$(DELIM)debug-flash-efuse.bin
 	ESP32S3_PARTITION_OFFSET := 0x250000
 	ESPTOOL_WRITEFLASH_OPTS := -fs keep -fm keep -ff keep
 endif
