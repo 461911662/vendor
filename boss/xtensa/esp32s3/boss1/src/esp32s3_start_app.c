@@ -3,8 +3,8 @@
  ****************************************************************************/
 #include <stdint.h>
 #include <syslog.h>
-#include <config.h>
 #include <errno.h>
+#include <nuttx/config.h>
 #include <nuttx/sched.h>
 #include <nuttx/kmalloc.h>
 
