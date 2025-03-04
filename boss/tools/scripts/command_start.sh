@@ -15,8 +15,19 @@ usage() {
   echo "USAGE: ${SCRIPT_NAME} [-h] -t <target>"
   echo ""
   echo "Where:"
-  echo "  -t <target> Target project"
+  echo "  -t <target> Target project, eg: ${SCRIPT_NAME} -t esp32s3"
+  echo "  -d delete all project's env."
   echo ""
+}
+
+delete_env() {
+  local context1=$(dirname "${curdir}")/.boss
+  local context2=${HOME}/.boss
+  println "delete lists:"
+  println "${context1}"
+  rm -rf ${context1}
+  println "${context2}"
+  rm -rf ${context2}
 }
 
 install_python_zip() {
@@ -94,10 +105,14 @@ check_python_env() {
   fi
 }
 
-while getopts ":ht:" arg; do
+while getopts ":ht:d" arg; do
   case "${arg}" in
     t)
       target=${OPTARG}
+      ;;
+    d)
+      delete_env
+      exit 0
       ;;
     h)
       usage
@@ -125,4 +140,23 @@ echo "Python check:"
 ${python_prog} --version
 
 println "To Download Tools."
-${python_prog} ${curdir}/idf-tools.py download --targets $target
+${python_prog} ${curdir}/idf-tools.py download --targets $target tools required cmake *qemu*
+
+println "Env Building."
+IFS=$'\n'
+output=($(${python_prog} ${curdir}/idf-tools.py export --target esp32s3 --format shell))
+IFS=' '
+last_output="${output[-1]}"
+
+println "\n\n${last_output}\n"
+IFS=';'
+cmds=(${last_output})
+echo "#!/usr/bin/env bash" > ${PWD}/set_env.sh
+for cmd in "${cmds[@]}"; do
+    echo $cmd >> ${PWD}/set_env.sh
+done
+IFS=' '
+chmod a+x ${PWD}/set_env.sh
+
+println "Finished Configure Tasks.\n\n"
+

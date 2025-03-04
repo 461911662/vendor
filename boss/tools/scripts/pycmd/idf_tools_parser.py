@@ -6,6 +6,7 @@
 import argparse
 from collections import namedtuple
 import copy
+import fnmatch
 import functools
 import json
 import os
@@ -292,7 +293,11 @@ class _IDFTool(object):
         if not match:
             return UNKNOWN_VERSION
         if not self._current_options.version_regex_replace:
-            return match.group(0)
+            try:
+                return match.group(1)
+            except Exception as e:
+                warn(str(e))
+                return UNKNOWN_VERSION
         else:
             return re.sub(self._current_options.version_regex, self._current_options.version_regex_replace, match.group(0))  # type: ignore
 
@@ -335,7 +340,7 @@ class _IDFTool(object):
                 fatal(f'tool {self.name} version {version} is installed, but cannot be run: {e}')
                 tool_error = True
             else:
-                if ver_str != version:
+                if version != ver_str:
                     warn(f'tool {self.name} version {version} is installed, but has reported version {ver_str}')
                 self.versions_installed.append(version)
         if tool_error:
@@ -740,6 +745,10 @@ def _filer_tools_info(targets: List[str], tools_info: Dict[str, _IDFTool]) -> Di
 
 def _get_need_tools_by_agrs(tool_list: List[str], overall_tools: OrderedDict, targets: List[str]) -> List[str]:
     tools = []
+
+    for tool_pattern in tool_list:
+        tools.extend([k for k, _ in overall_tools.items() if fnmatch.fnmatch(k,tool_pattern) and k not in tools])
+
     if 'required' in tool_list:
         tools.extend([k for k, v in overall_tools.items() if v.get_install_type() == _IDFTool.INSTALL_ALWAYS and k not in tools])
 
