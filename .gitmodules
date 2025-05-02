@@ -2,3 +2,6 @@
 	path = boss/app
 	url = https://github.com/461911662/boss-app.git
 	branch = boss1-dev
+[submodule "boss/xtensa/esp-hal-3rdparty"]
+	path = boss/xtensa/esp-hal-3rdparty
+	url = https://github.com/461911662/esp-hal-3rdparty
