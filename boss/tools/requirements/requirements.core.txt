@@ -5,3 +5,4 @@ click
 pyparsing
 esptool
 imgtool
+pyelftools

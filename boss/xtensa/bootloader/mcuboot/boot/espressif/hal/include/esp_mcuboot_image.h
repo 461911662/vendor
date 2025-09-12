@@ -24,3 +24,17 @@ typedef struct esp_image_load_header {
     uint32_t dram_flash_offset;     /* Flash offset(LMA) for start of DRAM region */
     uint32_t dram_size;             /* Size of DRAM region */
 } esp_image_load_header_t;
+
+#define ESP_BOSS_LOAD_HEADER_MAGIC 0x53534f42 /* "BOSS" */
+
+typedef struct esp_boss_load_header {
+    uint32_t magic;    // 'B','O','S','S'
+    uint32_t entry_point;// 入口点地址
+    uint32_t segment_count;// 段数量
+} esp_boss_image_load_header_t;
+
+typedef struct {
+    uint32_t p_vaddr;    // 虚拟地址
+    uint32_t p_filesz;   // 文件大小
+    uint32_t offset;     // 偏移量
+} esp_boss_seg_info_t;

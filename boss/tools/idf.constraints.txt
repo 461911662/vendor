@@ -18,6 +18,9 @@ esptool~=4.8
 # imgtool: for bootloader sign
 imgtool~=2.1.0
 
+# pyelftools: for parsing ELF files
+pyelftools~=0.31
+
 # --------- CORE ends ----------
 
 # --------- GDBGUI -------------

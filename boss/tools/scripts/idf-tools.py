@@ -13,6 +13,7 @@ from pycmd.utils import fatal, warn, info, CURRENT_PLATFORM
 from pycmd.idf_tools_python_env import install_python_env, uninstall_python_env
 from pycmd.idf_tools_unpack import unpack
 from pycmd.idf_tools_parser import do_export, do_download, EXPORT_SHELL, EXPORT_KEY_VALUE
+from pycmd.idf_tools_mkimg import do_mkimage
 
 # custom directory.
 IDF_TOOLS_PATH_DEFAULT = os.path.join('~', '.boss')
@@ -111,6 +112,9 @@ def action_download(args: argparse.Namespace) -> None:
         fatal(f"{g.tools_json} is bad file.")
         raise SystemExit(1)
 
+def action_mkimage(args: argparse.Namespace) -> None:
+    do_mkimage(args.input, args.output)
+
 def main(argv: List[str]) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--quiet', help='Don\'t output diagnostic messages to stdout/stderr', action='store_true')
@@ -147,6 +151,10 @@ def main(argv: List[str]) -> None:
                               'or key-value (suitable for parsing by other tools'))
     export.add_argument('--targets', default='all', help=('A comma separated list of desired chip targets for installing. '
                                                         ' It defaults to export all supported targets info.'))
+
+    mkimage = subparsers.add_parser('mkimage', help='Make Image for Boss.')
+    mkimage.add_argument('--input', default='nuttx', help='Input image file to make.')
+    mkimage.add_argument('--output', default='nuttx.bin', help='Output image file to make.')
 
     # let's start parser cmd's args
     args = parser.parse_args(argv)

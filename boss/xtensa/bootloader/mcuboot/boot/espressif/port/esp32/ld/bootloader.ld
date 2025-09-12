@@ -12,6 +12,15 @@
 
 MEMORY
 {
+#if !CONFIG_BOSS1_MCUBOOT_ENABLE
+  /*
+   * iram1 for mcuboot
+   * iram_loader_seg is currently placed on APP_CPU cache IRAM address range
+  */
+  iram_loader_seg (RWX) :           org = 0x40078000, len = 0x6500
+  iram_seg (RWX) :                  org = 0x400B0000, len = 0x9000
+  dram_seg (RW) :                   org = 0x3FFF4700, len = 0xB900
+#else
 #ifdef CONFIG_ESP_MULTI_PROCESSOR_BOOT
   iram_loader_seg (RWX) :           org = 0x400AB900, len = 0x6500
 #else
@@ -20,6 +29,7 @@ MEMORY
 #endif
   iram_seg (RWX) :                  org = 0x40090000, len = 0x9000
   dram_seg (RW) :                   org = 0x3FFF4700, len = 0xB900
+#endif
 }
 
 /*  Default entry point:  */
