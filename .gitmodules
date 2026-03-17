@@ -5,3 +5,4 @@
 [submodule "boss/xtensa/esp-hal-3rdparty"]
 	path = boss/xtensa/esp-hal-3rdparty
 	url = https://github.com/461911662/esp-hal-3rdparty
+	branch = release/master.a
